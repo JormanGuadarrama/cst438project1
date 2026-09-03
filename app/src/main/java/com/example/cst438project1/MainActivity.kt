@@ -21,7 +21,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CST438Project1Theme {
-                SignUpScreen()
                 LandingScreen()
             }
         }
