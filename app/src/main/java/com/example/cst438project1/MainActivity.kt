@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cst438project1.ui.screens.SignUpScreen
+import com.example.cst438project1.ui.screens.LandingScreen
 import com.example.cst438project1.ui.theme.CST438Project1Theme
 
 class MainActivity : ComponentActivity() {
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CST438Project1Theme {
                 SignUpScreen()
+                LandingScreen()
             }
         }
     }

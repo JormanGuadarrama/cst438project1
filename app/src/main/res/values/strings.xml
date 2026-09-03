@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CST438 Project1</string>
     <string name="title_activity_signup">SignUpActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
