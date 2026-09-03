@@ -34,7 +34,17 @@ fun SignUpScreen() {
     var confirmPassword by remember {
         mutableStateOf("")
     }
-    var errorMessage by remember {
+
+    var usernameError by remember {
+        mutableStateOf("")
+    }
+    var passwordError by remember {
+        mutableStateOf("")
+    }
+    var confirmPasswordError by remember {
+        mutableStateOf("")
+    }
+    var tempMessage by remember {
         mutableStateOf("")
     }
 
@@ -59,6 +69,12 @@ fun SignUpScreen() {
             label = {
                 Text("Username")
             },
+            isError = usernameError.isNotEmpty(),
+            supportingText = {
+                if (usernameError.isNotEmpty()) {
+                    Text(usernameError, color = Color.Red)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
                 .padding(bottom=16.dp),
             singleLine = true
@@ -73,6 +89,12 @@ fun SignUpScreen() {
                 Text("Password")
             },
             visualTransformation = PasswordVisualTransformation(),
+            isError = passwordError.isNotEmpty(),
+            supportingText = {
+                if (passwordError.isNotEmpty()) {
+                    Text(passwordError, color = Color.Red)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
                 .padding(bottom = 16.dp),
             singleLine = true
@@ -87,6 +109,12 @@ fun SignUpScreen() {
                 Text("Confirm Password")
             },
             visualTransformation = PasswordVisualTransformation(),
+            isError = confirmPasswordError.isNotEmpty(),
+            supportingText = {
+                if (confirmPasswordError.isNotEmpty()) {
+                    Text(confirmPasswordError, color = Color.Red)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
                 .padding(bottom = 24.dp),
             singleLine = true
@@ -96,16 +124,22 @@ fun SignUpScreen() {
             onClick = {
                 val usernameCheck = isValidUsername(userName)
                 val passwordCheck = isValidPassword(password)
-                if(usernameCheck.errorCode != 0) {
-                    errorMessage = usernameCheck.errorMessage
-                }else if(passwordCheck.errorCode != 0) {
-                    errorMessage = passwordCheck.errorMessage
-                }else if(password != confirmPassword) {
-                    errorMessage="Passwords do not match"
-                //  Add other else ifs for future conditions
-                }else{
-                    errorMessage="Looks Good, Time for logic"
+
+                usernameError = usernameCheck.errorMessage
+                passwordError = passwordCheck.errorMessage
+                confirmPasswordError = if (password != confirmPassword) "Passwords do not match" else ""
+
+                //  Set more field errors here as more restrictions are added
+
+                tempMessage = if (usernameCheck.errorCode == 0
+                    && passwordCheck.errorCode == 0
+                    && confirmPasswordError.isEmpty()) {
+
                     // TODO: Actual sign up logic ;-;
+
+                    "Looks Good, Time for logic"
+                } else {
+                    ""
                 }
             },
             modifier = Modifier
@@ -115,10 +149,9 @@ fun SignUpScreen() {
             Text(text="Submit", fontSize = 20.sp)
         }
 
-        if (errorMessage.isNotEmpty()) {
+        if (tempMessage.isNotEmpty()) {
             Text(
-                text=errorMessage,
-                color=Color.Red,
+                text=tempMessage,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(top=12.dp)
             )
