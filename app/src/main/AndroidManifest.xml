@@ -27,7 +27,8 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
-            android:label="@string/title_activity_signup"
+            android:label="@string/title_activity_signup" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login"
