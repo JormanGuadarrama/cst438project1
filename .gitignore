@@ -1,15 +1,126 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# =========================
+# Gradle
+# =========================
+.gradle/
+**/build/
+
+# Gradle wrapper should be committed
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# Gradle cache/config
+.gradletasknamecache
+gradle-app.setting
+
+
+# =========================
+# Local configuration
+# =========================
 local.properties
+
+
+# =========================
+# Android Studio / IntelliJ
+# =========================
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# Generated output
+out/
+bin/
+gen/
+
+# Android Studio captures/profiling
+captures/
+*.hprof
+
+# Temporary editor files
+*~
+*.swp
+
+
+# =========================
+# Android build artifacts
+# =========================
+*.apk
+*.aab
+*.ap_
+*.dex
+output.json
+
+# Native builds / NDK
+.externalNativeBuild/
+.cxx/
+obj/
+
+# Signing
+.signing/
+*.jks
+*.keystore
+
+
+# =========================
+# Kotlin / JVM
+# =========================
+*.class
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+
+# =========================
+# Logs
+# =========================
+*.log
+
+
+# =========================
+# Eclipse / Legacy tooling
+# =========================
+.project
+.classpath
+.cproject
+.settings/
+
+# Legacy Android/Eclipse generated files
+proguard/
+gen-external-apklibs
+
+# J2ME
+.mtj.tmp/
+
+
+# =========================
+# Archives / packaged files
+# =========================
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Exception: Gradle wrapper JAR must be committed
+!gradle/wrapper/gradle-wrapper.jar
+
+
+# =========================
+# Services / plugins
+# =========================
+
+# Firebase / Google Services
+google-services.json
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Crashlytics / Fabric
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
