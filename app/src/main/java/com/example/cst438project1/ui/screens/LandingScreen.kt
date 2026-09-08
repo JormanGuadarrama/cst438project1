@@ -7,13 +7,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.ui.theme.CST438Project1Theme
 
 @Composable
-fun LandingScreen(){
+fun LandingScreen(navController: NavHostController){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -26,7 +29,7 @@ fun LandingScreen(){
 
         Button(
             onClick = {
-
+                navController.navigate("login")
             }
         ) {
             Text("Login")
@@ -34,7 +37,7 @@ fun LandingScreen(){
 
         Button(
             onClick = {
-
+                navController.navigate("signup")
             }
         ) {
             Text("Sign Up")
@@ -46,6 +49,7 @@ fun LandingScreen(){
 @Composable
 fun LandingScreenPreview() {
     CST438Project1Theme {
-        LandingScreen()
+        val navController= rememberNavController()
+        LandingScreen(navController)
     }
 }

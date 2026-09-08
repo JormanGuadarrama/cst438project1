@@ -24,10 +24,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.ui.theme.CST438Project1Theme
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen(navController: NavHostController){
     var userName by remember {
         mutableStateOf("")
     }
@@ -106,7 +108,7 @@ fun LoginScreen(){
             modifier = Modifier
                 .padding(top=20.dp)
                 .clickable{
-                    //TODO:goes back to landing Page
+                    navController.popBackStack()
                 }
         )
     }
@@ -116,6 +118,7 @@ fun LoginScreen(){
 @Composable
 fun LoginScreenPreview() {
     CST438Project1Theme {
-        LoginScreen()
+        val navController= rememberNavController()
+        LoginScreen(navController)
     }
 }
