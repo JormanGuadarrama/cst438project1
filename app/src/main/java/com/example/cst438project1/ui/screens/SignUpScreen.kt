@@ -21,10 +21,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.ui.theme.CST438Project1Theme
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(navController: NavHostController) {
     var userName by remember {
         mutableStateOf("")
     }
@@ -185,6 +187,7 @@ fun isValidPassword(password: String): ValidationResult {
 @Composable
 fun SignUpScreenPreview() {
     CST438Project1Theme {
-        SignUpScreen()
+        val navController= rememberNavController()
+        SignUpScreen(navController)
     }
 }
