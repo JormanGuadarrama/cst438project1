@@ -42,7 +42,7 @@ fun LandingScreen(navController: NavHostController){
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            Text(text="Submit", fontSize = 20.sp)
+            Text(text="Login", fontSize = 20.sp)
         }
 
         Button(
@@ -54,7 +54,7 @@ fun LandingScreen(navController: NavHostController){
                 .padding(top = 16.dp)
                 .height(50.dp)
         ) {
-            Text(text="Submit", fontSize = 20.sp)
+            Text(text="Sign Up", fontSize = 20.sp)
         }
     }
 }
