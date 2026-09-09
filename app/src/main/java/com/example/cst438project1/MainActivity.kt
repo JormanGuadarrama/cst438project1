@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.cst438project1.navigation.NavTree
 import com.example.cst438project1.ui.screens.SignUpScreen
 import com.example.cst438project1.ui.screens.LandingScreen
 import com.example.cst438project1.ui.theme.CST438Project1Theme
@@ -21,7 +23,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CST438Project1Theme {
-                LandingScreen()
+                val navController= rememberNavController()
+                NavTree(navController)
             }
         }
     }
