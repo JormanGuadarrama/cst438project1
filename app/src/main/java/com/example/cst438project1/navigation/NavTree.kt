@@ -7,10 +7,16 @@ import androidx.navigation.compose.composable
 import com.example.cst438project1.ui.screens.HomeScreen
 import com.example.cst438project1.ui.screens.LandingScreen
 import com.example.cst438project1.ui.screens.LoginScreen
+import com.example.cst438project1.ui.screens.ProfilePicScreen
+import com.example.cst438project1.ui.screens.ProfileViewModel
 import com.example.cst438project1.ui.screens.SignUpScreen
+import com.example.cst438project1.ui.screens.UserProfileScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
 fun NavTree(navController: NavHostController){
+    val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = "landing"
@@ -25,7 +31,13 @@ fun NavTree(navController: NavHostController){
             SignUpScreen(navController)
         }
         composable("home"){
-            HomeScreen(navController)
+            HomeScreen(navController, profileViewModel)
+        }
+        composable("profilepic"){
+            ProfilePicScreen(navController, profileViewModel)
+        }
+        composable("userprofilescreen"){
+            UserProfileScreen(navController, profileViewModel)
         }
     }
 }
