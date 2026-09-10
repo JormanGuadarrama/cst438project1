@@ -25,7 +25,9 @@ android {
             localProperties.load(localPropertiesFile.inputStream())
         }
         val lastFmKey = localProperties.getProperty("LASTFM_API_KEY") ?: ""
+        val lastFmSecret = localProperties.getProperty("LASTFM_API_SECRET") ?: ""
         buildConfigField("String", "LASTFM_API_KEY", "\"$lastFmKey\"")
+        buildConfigField("String", "LASTFM_API_SECRET", "\"$lastFmSecret\"")
     }
 
     buildTypes {
@@ -53,6 +55,7 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
