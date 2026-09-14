@@ -1,6 +1,7 @@
 import java.util.Properties
 
 plugins {
+    id("dev.detekt") version "2.0.0-alpha.6"
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -52,7 +53,14 @@ android {
         buildConfig = true
     }
 }
-
+detekt {
+    toolVersion = "2.0.0-alpha.6"
+    source.setFrom("src/main/java", "src/main/kotlin")
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+    allRules = false
+    ignoreFailures = false
+}
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
