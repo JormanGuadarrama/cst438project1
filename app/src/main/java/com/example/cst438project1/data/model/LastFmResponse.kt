@@ -26,3 +26,16 @@ data class Image(
     @SerializedName("#text") val url: String,
     @SerializedName("size") val size: String
 )
+
+data class LastFmTopAlbumsResponse(
+    @SerializedName("topalbums") val topAlbums: TopAlbums
+)
+
+data class TopAlbums(
+    @SerializedName("album") val albums: List<Album>
+)
+
+data class Album(
+    @SerializedName("name") val name: String,
+    @SerializedName("image") val image: List<Image>
+)

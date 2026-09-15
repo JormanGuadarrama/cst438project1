@@ -28,6 +28,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,6 +58,8 @@ fun HomeScreen(
     val searchResults by viewModel.searchResults.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val selectedArtist by viewModel.selectedArtist.collectAsState()
+    val selectedAlbumImageUrl by viewModel.selectedAlbumImageUrl.collectAsState()
     val selectedImage by profileViewModel.selectedImage
     val selectedColor by profileViewModel.selectedColor
 
@@ -64,7 +68,10 @@ fun HomeScreen(
         searchQuery = viewModel.searchQuery,
         onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
         onSearchClick = { viewModel.performSearch() },
+        onArtistClick = { viewModel.onArtistClick(it) },
         searchResults = searchResults,
+        selectedArtist = selectedArtist,
+        selectedAlbumImageUrl = selectedAlbumImageUrl,
         isLoading = isLoading,
         errorMessage = errorMessage,
         selectedImage = selectedImage,
@@ -78,7 +85,10 @@ fun HomeScreenContent(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onSearchClick: () -> Unit,
+    onArtistClick: (Artist) -> Unit,
     searchResults: List<Artist>,
+    selectedArtist: Artist?,
+    selectedAlbumImageUrl: String?,
     isLoading: Boolean,
     errorMessage: String?,
     selectedImage: Int,
@@ -149,6 +159,24 @@ fun HomeScreenContent(
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(16.dp))
+            
+            // Selected Artist/Album Image
+            if (selectedArtist != null) {
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .size(150.dp)
+                        .background(Color.LightGray)
+                ) {
+                    AsyncImage(
+                        model = selectedAlbumImageUrl,
+                        contentDescription = "Selected Artist Album",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
             if (isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -165,7 +193,7 @@ fun HomeScreenContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(searchResults) { artist ->
-                        ArtistItem(artist)
+                        ArtistItem(artist, onArtistClick)
                         HorizontalDivider()
                     }
                 }
@@ -175,9 +203,12 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun ArtistItem(artist: Artist) {
+fun ArtistItem(artist: Artist, onClick: (Artist) -> Unit) {
     Button(
-        onClick = { println("Button clicked for artist: ${artist.name}") },
+        onClick = { 
+            println("Button clicked for artist: ${artist.name}")
+            onClick(artist)
+        },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -201,7 +232,10 @@ fun HomeScreenPreview() {
             searchQuery = "Radiohead",
             onSearchQueryChange = {},
             onSearchClick = {},
+            onArtistClick = {},
             searchResults = emptyList(),
+            selectedArtist = null,
+            selectedAlbumImageUrl = null,
             isLoading = false,
             errorMessage = null,
             selectedImage = com.example.cst438project1.R.drawable.profile_bunny,

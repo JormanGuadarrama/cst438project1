@@ -27,8 +27,27 @@ class HomeViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
+    private val _selectedArtist = MutableStateFlow<Artist?>(null)
+    val selectedArtist: StateFlow<Artist?> = _selectedArtist
+
+    private val _selectedAlbumImageUrl = MutableStateFlow<String?>(null)
+    val selectedAlbumImageUrl: StateFlow<String?> = _selectedAlbumImageUrl
+
     fun onSearchQueryChange(newQuery: String) {
         searchQuery = newQuery
+    }
+
+    fun onArtistClick(artist: Artist) {
+        _selectedArtist.value = artist
+        _searchResults.value = emptyList() // Clear results
+        
+        viewModelScope.launch {
+            repository.getTopAlbum(artist.name).onSuccess { album ->
+                val url = album?.image?.find { it.size == "extralarge" }?.url
+                    ?: album?.image?.lastOrNull()?.url
+                _selectedAlbumImageUrl.value = url
+            }
+        }
     }
 
     fun performSearch() {
