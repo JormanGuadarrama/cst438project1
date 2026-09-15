@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,18 +28,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.ui.theme.CST438Project1Theme
+import com.example.cst438project1.ui.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(navController: NavHostController){
+fun LoginScreen(navController: NavHostController,authViewModel: AuthViewModel){
     var userName by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
-    var errorMessage by remember {
-        mutableStateOf("")
-    }
+    val authError by authViewModel.errorMessage.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,13 +78,14 @@ fun LoginScreen(navController: NavHostController){
         )
         Button(
             onClick = {
-                if(userName.isBlank()){
-                    errorMessage="Username cannot be empty"
-                }else if(password.isBlank()){
-                    errorMessage="Password cannot be empty"
-                }else{
-                    errorMessage=""
-                    //TODO: logic authentication
+                if (userName.isBlank() || password.isBlank()) {
+                    authViewModel.setError("Username and password cannot be empty")
+                } else {
+                    authViewModel.login(userName, password) {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }
                 }
             },
             modifier = Modifier
@@ -93,9 +94,9 @@ fun LoginScreen(navController: NavHostController){
         ) {
             Text(text="Submit", fontSize = 20.sp)
         }
-        if (errorMessage.isNotEmpty()){
+        if (authError.isNotEmpty()){
             Text(
-                text=errorMessage,
+                text=authError,
                 color=Color.Red,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(top=12.dp)
@@ -113,12 +114,4 @@ fun LoginScreen(navController: NavHostController){
         )
     }
 
-}
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    CST438Project1Theme {
-        val navController= rememberNavController()
-        LoginScreen(navController)
-    }
 }

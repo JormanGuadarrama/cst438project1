@@ -1,5 +1,6 @@
 package com.example.cst438project1.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,9 +26,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.ui.theme.CST438Project1Theme
+import com.example.cst438project1.ui.viewmodel.AuthViewModel
 
 @Composable
-fun SignUpScreen(navController: NavHostController) {
+fun SignUpScreen(navController: NavHostController,authViewModel: AuthViewModel) {
     var userName by remember {
         mutableStateOf("")
     }
@@ -46,9 +49,7 @@ fun SignUpScreen(navController: NavHostController) {
     var confirmPasswordError by remember {
         mutableStateOf("")
     }
-    var tempMessage by remember {
-        mutableStateOf("")
-    }
+    val authError by authViewModel.errorMessage.collectAsState()
 
     Column(
         modifier = Modifier
@@ -132,16 +133,17 @@ fun SignUpScreen(navController: NavHostController) {
                 confirmPasswordError = if (password != confirmPassword) "Passwords do not match" else ""
 
                 //  Set more field errors here as more restrictions are added
+                val allValid =
+                    usernameError.isEmpty() &&
+                            passwordError.isEmpty() &&
+                            confirmPasswordError.isEmpty()
 
-                tempMessage = if (usernameCheck.errorCode == 0
-                    && passwordCheck.errorCode == 0
-                    && confirmPasswordError.isEmpty()) {
-
-                    // TODO: Actual sign up logic ;-;
-
-                    "Looks Good, Time for logic"
-                } else {
-                    ""
+                if (allValid) {
+                    authViewModel.signUp(userName, password) {
+                        navController.navigate("home") {
+                            popUpTo("signup") { inclusive = true }
+                        }
+                    }
                 }
             },
             modifier = Modifier
@@ -150,14 +152,22 @@ fun SignUpScreen(navController: NavHostController) {
         ) {
             Text(text="Submit", fontSize = 20.sp)
         }
-
-        if (tempMessage.isNotEmpty()) {
+        if (authError.isNotEmpty()) {
             Text(
-                text=tempMessage,
+                text = authError,
+                color = Color.Red,
                 fontSize = 16.sp,
-                modifier = Modifier.padding(top=12.dp)
+                modifier = Modifier.padding(top = 12.dp)
             )
         }
+        Text(
+            text = "Back",
+            color = Color.Blue,
+            fontSize = 16.sp,
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .clickable { navController.popBackStack() }
+        )
     }
 }
 
@@ -183,11 +193,3 @@ fun isValidPassword(password: String): ValidationResult {
     return ValidationResult(0, "")
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignUpScreenPreview() {
-    CST438Project1Theme {
-        val navController= rememberNavController()
-        SignUpScreen(navController)
-    }
-}
