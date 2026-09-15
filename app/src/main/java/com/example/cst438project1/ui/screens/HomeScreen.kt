@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.data.model.Artist
 import com.example.cst438project1.ui.theme.CST438Project1Theme
+import com.example.cst438project1.ui.viewmodel.AuthViewModel
 import com.example.cst438project1.ui.viewmodel.HomeViewModel
 import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 
@@ -49,13 +50,21 @@ import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
+    authViewModel: AuthViewModel,
     viewModel: HomeViewModel = viewModel()
 ) {
     val searchResults by viewModel.searchResults.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
-    val selectedImage by profileViewModel.selectedImage
-    val selectedColor by profileViewModel.selectedColor
+    val user by authViewModel.currentUser.collectAsState()
+    LaunchedEffect(user) {
+        user?.let { u ->
+            profileViewModel.updateColor(Color(u.profileColor))
+            profileViewModel.updateImage(u.profileImage)
+        }
+    }
+    val selectedImage = user?.profileImage ?: profileViewModel.selectedImage.value
+    val selectedColor = user?.profileColor?.let {Color(it)} ?: profileViewModel.selectedColor.value
 
     HomeScreenContent(
         navController = navController,
@@ -110,6 +119,7 @@ fun HomeScreenContent(
                     }
                     IconButton(
                         onClick = {
+                            //TODO: change route to userprofilescreen
                             navController.navigate("profilepic")
                         }
                     ) {
@@ -181,25 +191,6 @@ fun ArtistItem(artist: Artist) {
     ) {
         Text(text = artist.name, style = MaterialTheme.typography.titleMedium)
         Text(text = "${artist.listeners} listeners", style = MaterialTheme.typography.bodySmall)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    val navController = rememberNavController()
-    CST438Project1Theme {
-        HomeScreenContent(
-            navController = navController,
-            searchQuery = "Radiohead",
-            onSearchQueryChange = {},
-            onSearchClick = {},
-            searchResults = emptyList(),
-            isLoading = false,
-            errorMessage = null,
-            selectedImage = com.example.cst438project1.R.drawable.profile_bunny,
-            selectedColor = Color.Red
-        )
     }
 }
 
