@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -174,13 +176,18 @@ fun HomeScreenContent(
 
 @Composable
 fun ArtistItem(artist: Artist) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
+    Button(
+        onClick = { println("Button clicked for artist: ${artist.name}") },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Text(text = artist.name, style = MaterialTheme.typography.titleMedium)
-        Text(text = "${artist.listeners} listeners", style = MaterialTheme.typography.bodySmall)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(text = artist.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = "${artist.listeners} listeners", style = MaterialTheme.typography.bodySmall)
+        }
     }
 }
 

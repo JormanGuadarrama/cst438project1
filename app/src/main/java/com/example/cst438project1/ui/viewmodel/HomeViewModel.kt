@@ -38,7 +38,7 @@ class HomeViewModel : ViewModel() {
             _isLoading.value = true
             _errorMessage.value = null
             
-            val result = repository.searchArtists(searchQuery)
+            val result = repository.searchArtists(searchQuery, limit = 3)
             
             result.onSuccess { artists ->
                 _searchResults.value = artists
