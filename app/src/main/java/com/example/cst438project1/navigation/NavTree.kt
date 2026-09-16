@@ -10,29 +10,31 @@ import com.example.cst438project1.ui.screens.LandingScreen
 import com.example.cst438project1.ui.screens.LoginScreen
 import com.example.cst438project1.ui.screens.SignUpScreen
 import com.example.cst438project1.ui.screens.ProfilePicScreen
+import com.example.cst438project1.ui.viewmodel.AuthViewModel
 import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun NavTree(navController: NavHostController) {
+    val authViewModel: AuthViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "landing"
     ) {
         composable("landing") {
             LandingScreen(navController)
         }
         composable("login") {
-            LoginScreen(navController)
+            LoginScreen(navController,authViewModel)
         }
         composable("signup") {
-            SignUpScreen(navController)
+            SignUpScreen(navController,authViewModel)
         }
         composable("home") {
-            HomeScreen(navController, profileViewModel)
+            HomeScreen(navController, profileViewModel,authViewModel)
         }
         composable("profilepic") {
-            ProfilePicScreen(navController, profileViewModel)
+            ProfilePicScreen(navController, profileViewModel,authViewModel)
         }
     }
 }
