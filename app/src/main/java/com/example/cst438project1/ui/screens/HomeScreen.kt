@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,6 +61,9 @@ fun HomeScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
     val selectedArtist by viewModel.selectedArtist.collectAsState()
     val selectedAlbumImageUrl by viewModel.selectedAlbumImageUrl.collectAsState()
+    val selectedAlbumName by viewModel.selectedAlbumName.collectAsState()
+    val selectedArtistBio by viewModel.selectedArtistBio.collectAsState()
+    val selectedArtistTags by viewModel.selectedArtistTags.collectAsState()
     val selectedImage by profileViewModel.selectedImage
     val selectedColor by profileViewModel.selectedColor
 
@@ -72,6 +76,9 @@ fun HomeScreen(
         searchResults = searchResults,
         selectedArtist = selectedArtist,
         selectedAlbumImageUrl = selectedAlbumImageUrl,
+        selectedAlbumName = selectedAlbumName,
+        selectedArtistBio = selectedArtistBio,
+        selectedArtistTags = selectedArtistTags,
         isLoading = isLoading,
         errorMessage = errorMessage,
         selectedImage = selectedImage,
@@ -89,6 +96,9 @@ fun HomeScreenContent(
     searchResults: List<Artist>,
     selectedArtist: Artist?,
     selectedAlbumImageUrl: String?,
+    selectedAlbumName: String?,
+    selectedArtistBio: String?,
+    selectedArtistTags: List<String>,
     isLoading: Boolean,
     errorMessage: String?,
     selectedImage: Int,
@@ -160,21 +170,77 @@ fun HomeScreenContent(
             )
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Selected Artist/Album Image
+            // Selected Artist/Album Details
             if (selectedArtist != null) {
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .size(150.dp)
-                        .background(Color.LightGray)
+                Text(
+                    text = "Top Album",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    AsyncImage(
-                        model = selectedAlbumImageUrl,
-                        contentDescription = "Selected Artist Album",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                    Column(modifier = Modifier.width(150.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(150.dp)
+                                .background(Color.LightGray)
+                        ) {
+                            AsyncImage(
+                                model = selectedAlbumImageUrl,
+                                contentDescription = "Selected Artist Album",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        if (selectedAlbumName != null) {
+                            Text(
+                                text = selectedAlbumName,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = selectedArtist.name,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            selectedArtistTags.forEach { tag ->
+                                Text(
+                                    text = "#$tag",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.secondaryContainer,
+                                            RoundedCornerShape(4.dp)
+                                        )
+                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+
+                        if (selectedArtistBio != null) {
+                            Text(
+                                text = selectedArtistBio,
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 6,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             if (isLoading) {
@@ -236,6 +302,9 @@ fun HomeScreenPreview() {
             searchResults = emptyList(),
             selectedArtist = null,
             selectedAlbumImageUrl = null,
+            selectedAlbumName = null,
+            selectedArtistBio = null,
+            selectedArtistTags = emptyList(),
             isLoading = false,
             errorMessage = null,
             selectedImage = com.example.cst438project1.R.drawable.profile_bunny,

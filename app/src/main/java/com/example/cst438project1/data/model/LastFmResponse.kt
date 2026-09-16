@@ -39,3 +39,28 @@ data class Album(
     @SerializedName("name") val name: String,
     @SerializedName("image") val image: List<Image>
 )
+
+data class LastFmArtistInfoResponse(
+    @SerializedName("artist") val artist: ArtistDetail
+)
+
+data class ArtistDetail(
+    @SerializedName("name") val name: String,
+    @SerializedName("image") val image: List<Image>,
+    @SerializedName("bio") val bio: Bio,
+    @SerializedName("tags") val tags: Tags
+)
+
+data class Tags(
+    @SerializedName("tag") val tag: List<Tag>
+)
+
+data class Tag(
+    @SerializedName("name") val name: String,
+    @SerializedName("url") val url: String
+)
+
+data class Bio(
+    @SerializedName("summary") val summary: String,
+    @SerializedName("content") val content: String
+)
