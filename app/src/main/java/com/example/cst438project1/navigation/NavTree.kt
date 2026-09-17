@@ -12,9 +12,14 @@ import com.example.cst438project1.ui.screens.SignUpScreen
 import com.example.cst438project1.ui.screens.ProfilePicScreen
 import com.example.cst438project1.ui.viewmodel.AuthViewModel
 import com.example.cst438project1.ui.viewmodel.ProfileViewModel
+import com.example.cst438project1.ui.screens.SettingsScreen
 
 @Composable
-fun NavTree(navController: NavHostController) {
+fun NavTree(
+    navController: NavHostController,
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit
+) {
     val authViewModel: AuthViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
@@ -35,6 +40,12 @@ fun NavTree(navController: NavHostController) {
         }
         composable("profilepic") {
             ProfilePicScreen(navController, profileViewModel,authViewModel)
+        }
+        composable("settings") {
+            SettingsScreen(
+                navController = navController,
+                isDarkTheme = isDarkTheme,
+                onThemeChange = onThemeChange )
         }
     }
 }
