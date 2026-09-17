@@ -26,3 +26,41 @@ data class Image(
     @SerializedName("#text") val url: String,
     @SerializedName("size") val size: String
 )
+
+data class LastFmTopAlbumsResponse(
+    @SerializedName("topalbums") val topAlbums: TopAlbums
+)
+
+data class TopAlbums(
+    @SerializedName("album") val albums: List<Album>
+)
+
+data class Album(
+    @SerializedName("name") val name: String,
+    @SerializedName("image") val image: List<Image>
+)
+
+data class LastFmArtistInfoResponse(
+    @SerializedName("artist") val artist: ArtistDetail
+)
+
+data class ArtistDetail(
+    @SerializedName("name") val name: String,
+    @SerializedName("image") val image: List<Image>,
+    @SerializedName("bio") val bio: Bio,
+    @SerializedName("tags") val tags: Tags
+)
+
+data class Tags(
+    @SerializedName("tag") val tag: List<Tag>
+)
+
+data class Tag(
+    @SerializedName("name") val name: String,
+    @SerializedName("url") val url: String
+)
+
+data class Bio(
+    @SerializedName("summary") val summary: String,
+    @SerializedName("content") val content: String
+)

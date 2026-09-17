@@ -2,7 +2,9 @@ package com.example.cst438project1.data.repository
 
 import com.example.cst438project1.BuildConfig
 import com.example.cst438project1.data.api.LastFmApiService
+import com.example.cst438project1.data.model.Album
 import com.example.cst438project1.data.model.Artist
+import com.example.cst438project1.data.model.ArtistDetail
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -37,6 +39,39 @@ class LastFmRepository(private val apiService: LastFmApiService) {
             } catch (e: Exception) {
                 Result.failure(Exception("Network failure. Please check your connection."))
             }
+        }
+    }
+
+    suspend fun getTopAlbum(artistName: String): Result<Album?> {
+        return try {
+            val response = apiService.getTopAlbums(
+                artist = artistName,
+                apiKey = BuildConfig.LASTFM_API_KEY,
+                limit = 1
+            )
+            if (response.isSuccessful) {
+                Result.success(response.body()?.topAlbums?.albums?.firstOrNull())
+            } else {
+                Result.failure(Exception("API Error: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getArtistInfo(artistName: String): Result<ArtistDetail?> {
+        return try {
+            val response = apiService.getArtistInfo(
+                artist = artistName,
+                apiKey = BuildConfig.LASTFM_API_KEY
+            )
+            if (response.isSuccessful) {
+                Result.success(response.body()?.artist)
+            } else {
+                Result.failure(Exception("API Error: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

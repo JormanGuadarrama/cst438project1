@@ -1,6 +1,8 @@
 package com.example.cst438project1.data.api
 
+import com.example.cst438project1.data.model.LastFmArtistInfoResponse
 import com.example.cst438project1.data.model.LastFmSearchResponse
+import com.example.cst438project1.data.model.LastFmTopAlbumsResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Field
@@ -18,6 +20,23 @@ interface LastFmApiService {
         @Query("limit") limit: Int = 10,
         @Query("format") format: String = "json"
     ): Response<LastFmSearchResponse>
+
+    @GET("2.0/")
+    suspend fun getTopAlbums(
+        @Query("method") method: String = "artist.gettopalbums",
+        @Query("artist") artist: String,
+        @Query("api_key") apiKey: String,
+        @Query("limit") limit: Int = 1,
+        @Query("format") format: String = "json"
+    ): Response<LastFmTopAlbumsResponse>
+
+    @GET("2.0/")
+    suspend fun getArtistInfo(
+        @Query("method") method: String = "artist.getinfo",
+        @Query("artist") artist: String,
+        @Query("api_key") apiKey: String,
+        @Query("format") format: String = "json"
+    ): Response<LastFmArtistInfoResponse>
 
     @FormUrlEncoded
     @POST("2.0/")
