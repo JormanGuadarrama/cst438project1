@@ -134,7 +134,11 @@ fun HomeScreenContent(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
 
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("settings")
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings"
