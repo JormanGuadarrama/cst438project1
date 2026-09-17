@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.cst438project1.data.model.Artist
 import com.example.cst438project1.ui.theme.CST438Project1Theme
+import com.example.cst438project1.ui.viewmodel.AuthViewModel
 import com.example.cst438project1.ui.viewmodel.HomeViewModel
 import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 
@@ -54,6 +56,7 @@ import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
+    authViewModel: AuthViewModel,
     viewModel: HomeViewModel = viewModel()
 ) {
     val searchResults by viewModel.searchResults.collectAsState()
@@ -64,8 +67,15 @@ fun HomeScreen(
     val selectedAlbumName by viewModel.selectedAlbumName.collectAsState()
     val selectedArtistBio by viewModel.selectedArtistBio.collectAsState()
     val selectedArtistTags by viewModel.selectedArtistTags.collectAsState()
-    val selectedImage by profileViewModel.selectedImage
-    val selectedColor by profileViewModel.selectedColor
+    val user by authViewModel.currentUser.collectAsState()
+    LaunchedEffect(user) {
+        user?.let { u ->
+            profileViewModel.updateColor(Color(u.profileColor))
+            profileViewModel.updateImage(u.profileImage)
+        }
+    }
+    val selectedImage = user?.profileImage ?: profileViewModel.selectedImage.value
+    val selectedColor = user?.profileColor?.let {Color(it)} ?: profileViewModel.selectedColor.value
 
     HomeScreenContent(
         navController = navController,
@@ -132,6 +142,7 @@ fun HomeScreenContent(
                     }
                     IconButton(
                         onClick = {
+                            //TODO: change route to userprofilescreen
                             navController.navigate("profilepic")
                         }
                     ) {
@@ -312,4 +323,3 @@ fun HomeScreenPreview() {
         )
     }
 }
-

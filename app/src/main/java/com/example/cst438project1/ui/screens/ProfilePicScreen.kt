@@ -27,12 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.cst438project1.R
+import com.example.cst438project1.ui.viewmodel.AuthViewModel
 import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfilePicScreen(
     navController: NavHostController,
-    viewModel: ProfileViewModel
+    viewModel: ProfileViewModel,
+    authViewModel: AuthViewModel
 ) {
     val selectedImage by viewModel.selectedImage
     val selectedColor by viewModel.selectedColor
@@ -91,6 +93,7 @@ fun ProfilePicScreen(
                         )
                         .clickable {
                             viewModel.updateImage(img)
+                            authViewModel.updateProfileImage(img)
                         },
                     contentAlignment = Alignment.Center
                 ) {
@@ -119,7 +122,10 @@ fun ProfilePicScreen(
                             color = if (selectedColor == color) Color.Magenta else Color.Black,
                             shape = RoundedCornerShape(6.dp)
                         )
-                        .clickable {viewModel.updateColor(color)}
+                        .clickable {
+                            viewModel.updateColor(color)
+                            authViewModel.updateProfileColor(color)
+                        }
                 )
             }
         }
