@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,6 +29,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,6 +62,11 @@ fun HomeScreen(
     val searchResults by viewModel.searchResults.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val selectedArtist by viewModel.selectedArtist.collectAsState()
+    val selectedAlbumImageUrl by viewModel.selectedAlbumImageUrl.collectAsState()
+    val selectedAlbumName by viewModel.selectedAlbumName.collectAsState()
+    val selectedArtistBio by viewModel.selectedArtistBio.collectAsState()
+    val selectedArtistTags by viewModel.selectedArtistTags.collectAsState()
     val user by authViewModel.currentUser.collectAsState()
     LaunchedEffect(user) {
         user?.let { u ->
@@ -71,7 +82,13 @@ fun HomeScreen(
         searchQuery = viewModel.searchQuery,
         onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
         onSearchClick = { viewModel.performSearch() },
+        onArtistClick = { viewModel.onArtistClick(it) },
         searchResults = searchResults,
+        selectedArtist = selectedArtist,
+        selectedAlbumImageUrl = selectedAlbumImageUrl,
+        selectedAlbumName = selectedAlbumName,
+        selectedArtistBio = selectedArtistBio,
+        selectedArtistTags = selectedArtistTags,
         isLoading = isLoading,
         errorMessage = errorMessage,
         selectedImage = selectedImage,
@@ -85,7 +102,13 @@ fun HomeScreenContent(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onSearchClick: () -> Unit,
+    onArtistClick: (Artist) -> Unit,
     searchResults: List<Artist>,
+    selectedArtist: Artist?,
+    selectedAlbumImageUrl: String?,
+    selectedAlbumName: String?,
+    selectedArtistBio: String?,
+    selectedArtistTags: List<String>,
     isLoading: Boolean,
     errorMessage: String?,
     selectedImage: Int,
@@ -111,7 +134,11 @@ fun HomeScreenContent(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
 
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("settings")
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings"
@@ -157,6 +184,80 @@ fun HomeScreenContent(
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(16.dp))
+            
+            // Selected Artist/Album Details
+            if (selectedArtist != null) {
+                Text(
+                    text = "Top Album",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(modifier = Modifier.width(150.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(150.dp)
+                                .background(Color.LightGray)
+                        ) {
+                            AsyncImage(
+                                model = selectedAlbumImageUrl,
+                                contentDescription = "Selected Artist Album",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        if (selectedAlbumName != null) {
+                            Text(
+                                text = selectedAlbumName,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = selectedArtist.name,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            selectedArtistTags.forEach { tag ->
+                                Text(
+                                    text = "#$tag",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.secondaryContainer,
+                                            RoundedCornerShape(4.dp)
+                                        )
+                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+
+                        if (selectedArtistBio != null) {
+                            Text(
+                                text = selectedArtistBio,
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 6,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             if (isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -173,7 +274,7 @@ fun HomeScreenContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(searchResults) { artist ->
-                        ArtistItem(artist)
+                        ArtistItem(artist, onArtistClick)
                         HorizontalDivider()
                     }
                 }
@@ -183,14 +284,46 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun ArtistItem(artist: Artist) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
+fun ArtistItem(artist: Artist, onClick: (Artist) -> Unit) {
+    Button(
+        onClick = { 
+            println("Button clicked for artist: ${artist.name}")
+            onClick(artist)
+        },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Text(text = artist.name, style = MaterialTheme.typography.titleMedium)
-        Text(text = "${artist.listeners} listeners", style = MaterialTheme.typography.bodySmall)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(text = artist.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = "${artist.listeners} listeners", style = MaterialTheme.typography.bodySmall)
+        }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    val navController = rememberNavController()
+    CST438Project1Theme {
+        HomeScreenContent(
+            navController = navController,
+            searchQuery = "Radiohead",
+            onSearchQueryChange = {},
+            onSearchClick = {},
+            onArtistClick = {},
+            searchResults = emptyList(),
+            selectedArtist = null,
+            selectedAlbumImageUrl = null,
+            selectedAlbumName = null,
+            selectedArtistBio = null,
+            selectedArtistTags = emptyList(),
+            isLoading = false,
+            errorMessage = null,
+            selectedImage = com.example.cst438project1.R.drawable.profile_bunny,
+            selectedColor = Color.Red
+        )
+    }
+}
