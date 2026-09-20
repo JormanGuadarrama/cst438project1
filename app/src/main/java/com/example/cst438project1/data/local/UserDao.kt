@@ -27,4 +27,7 @@ interface UserDao {
     //for setting change password
     @Query("UPDATE users SET password = :newPassword WHERE id = :userId")
     suspend fun updatePassword(userId: Int, newPassword: String)
+
+    @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
+    suspend fun getUserById(id: Int): UserEntity?
 }

@@ -13,6 +13,7 @@ import com.example.cst438project1.ui.screens.ProfilePicScreen
 import com.example.cst438project1.ui.viewmodel.AuthViewModel
 import com.example.cst438project1.ui.viewmodel.ProfileViewModel
 import com.example.cst438project1.ui.screens.SettingsScreen
+import com.example.cst438project1.ui.screens.UserProfileScreen
 
 @Composable
 fun NavTree(
@@ -47,5 +48,9 @@ fun NavTree(
                 isDarkTheme = isDarkTheme,
                 onThemeChange = onThemeChange )
         }
+        composable("profile"){
+            UserProfileScreen(navController,profileViewModel,authViewModel)
+        }
+
     }
 }

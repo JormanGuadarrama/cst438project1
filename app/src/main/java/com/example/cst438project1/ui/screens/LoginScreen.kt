@@ -109,7 +109,7 @@ fun LoginScreen(navController: NavHostController,authViewModel: AuthViewModel){
             modifier = Modifier
                 .padding(top=20.dp)
                 .clickable{
-                    navController.popBackStack()
+                    navController.navigate("landing")
                 }
         )
     }
