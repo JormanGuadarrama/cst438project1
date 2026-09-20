@@ -126,4 +126,42 @@ class SettingsScreenTest {
 
         assertFalse(darkTheme)
     }
+
+    @Test
+    fun changePasswordButtonIsDisplayed() {
+        composeTestRule.setContent {
+            val navController = rememberNavController()
+
+            CST438Project1Theme {
+                SettingsScreen(
+                    navController = navController,
+                    isDarkTheme = false,
+                    onThemeChange = {}
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText("Change Password")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun deleteAccountButtonIsDisplayed() {
+        composeTestRule.setContent {
+            val navController = rememberNavController()
+
+            CST438Project1Theme {
+                SettingsScreen(
+                    navController = navController,
+                    isDarkTheme = false,
+                    onThemeChange = {}
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithText("Delete Account")
+            .assertIsDisplayed()
+    }
 }
