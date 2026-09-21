@@ -44,9 +44,10 @@ fun NavTree(
         }
         composable("settings") {
             SettingsScreen(
-                navController = navController,
+                navController,
                 isDarkTheme = isDarkTheme,
-                onThemeChange = onThemeChange )
+                onThemeChange = onThemeChange,
+                authViewModel )
         }
         composable("profile"){
             UserProfileScreen(navController,profileViewModel,authViewModel)

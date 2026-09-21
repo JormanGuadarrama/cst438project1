@@ -128,4 +128,14 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
     fun setCurrentUser(user: UserEntity?) {
         _currentUser.value = user
     }
+    fun deleteAccount(onSuccess: () -> Unit) {
+        val user = _currentUser.value ?: return
+
+        viewModelScope.launch {
+            repository.deleteUser(user.id)
+            _currentUser.value = null
+            _errorMessage.value = ""
+            onSuccess()
+        }
+    }
 }
