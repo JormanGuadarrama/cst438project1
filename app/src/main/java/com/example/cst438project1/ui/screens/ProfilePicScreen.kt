@@ -135,7 +135,7 @@ fun ProfilePicScreen(
             fontSize = 16.sp,
             modifier = Modifier
                 .padding(top = 20.dp)
-                .clickable {navController.popBackStack()}
+                .clickable {navController.navigate("profile")}
         )
     }
 }
