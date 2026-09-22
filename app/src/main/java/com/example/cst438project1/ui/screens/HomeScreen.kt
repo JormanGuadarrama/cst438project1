@@ -255,7 +255,6 @@ fun HomeScreenContent(
                             Text(
                                 text = selectedArtistBio,
                                 style = MaterialTheme.typography.bodySmall,
-                                maxLines = 6,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
                         }
