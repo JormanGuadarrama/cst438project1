@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cst438project1.data.api.RetrofitClient
+import com.example.cst438project1.data.model.Album
 import com.example.cst438project1.data.model.Artist
+import com.example.cst438project1.data.model.Track
 import com.example.cst438project1.data.repository.LastFmRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +46,15 @@ class HomeViewModel : ViewModel() {
     private val _selectedArtistTags = MutableStateFlow<List<String>>(emptyList())
     val selectedArtistTags: StateFlow<List<String>> = _selectedArtistTags
 
+    private val _selectedArtistTopTracks = MutableStateFlow<List<Track>>(emptyList())
+    val selectedArtistTopTracks: StateFlow<List<Track>> = _selectedArtistTopTracks
+
+    private val _selectedArtistOtherAlbums = MutableStateFlow<List<Album>>(emptyList())
+    val selectedArtistOtherAlbums: StateFlow<List<Album>> = _selectedArtistOtherAlbums
+
+    private val _selectedArtistSimilarArtists = MutableStateFlow<List<Artist>>(emptyList())
+    val selectedArtistSimilarArtists: StateFlow<List<Artist>> = _selectedArtistSimilarArtists
+
     fun onSearchQueryChange(newQuery: String) {
         searchQuery = newQuery
     }
@@ -51,14 +62,19 @@ class HomeViewModel : ViewModel() {
     fun onArtistClick(artist: Artist) {
         _selectedArtist.value = artist
         _searchResults.value = emptyList() // Clear results
-        
+        _selectedArtistTopTracks.value = emptyList()
+        _selectedArtistOtherAlbums.value = emptyList()
+        _selectedArtistSimilarArtists.value = emptyList()
+
         viewModelScope.launch {
-            // Fetch Top Album for the image and name
-            repository.getTopAlbum(artist.name).onSuccess { album ->
-                val url = album?.image?.find { it.size == "extralarge" }?.url
-                    ?: album?.image?.lastOrNull()?.url
+            // Fetch Top Albums (limit = 5) for top album + albums 2-5
+            repository.getTopAlbums(artist.name, limit = 5).onSuccess { albums ->
+                val firstAlbum = albums.firstOrNull()
+                val url = firstAlbum?.image?.find { (it.size == "extralarge") }?.url
+                    ?: firstAlbum?.image?.lastOrNull()?.url
                 _selectedAlbumImageUrl.value = url
-                _selectedAlbumName.value = album?.name
+                _selectedAlbumName.value = firstAlbum?.name
+                _selectedArtistOtherAlbums.value = albums.drop(1)
             }
 
             // Fetch Artist Info for bio and tags
@@ -70,6 +86,25 @@ class HomeViewModel : ViewModel() {
                     // Extract top 3 tags
                     _selectedArtistTags.value = artistDetail.tags.tag.take(3).map { it.name }
                 }
+            }
+
+            // Fetch Top Tracks (limit = 5)
+            repository.getTopTracks(artist.name, limit = 5).onSuccess { tracks ->
+                _selectedArtistTopTracks.value = tracks
+            }
+
+            // Fetch Similar Artists (limit = 3) and fetch top album image for each
+            repository.getSimilarArtists(artist.name, limit = 3).onSuccess { similar ->
+                val similarWithAlbumArt = similar.take(3).map { similarArtist ->
+                    val albumResult = repository.getTopAlbum(similarArtist.name)
+                    val albumImages = albumResult.getOrNull()?.image ?: emptyList()
+                    if (albumImages.isNotEmpty()) {
+                        similarArtist.copy(image = albumImages)
+                    } else {
+                        similarArtist
+                    }
+                }
+                _selectedArtistSimilarArtists.value = similarWithAlbumArt
             }
         }
     }
@@ -83,22 +118,25 @@ class HomeViewModel : ViewModel() {
         _selectedAlbumName.value = null
         _selectedArtistBio.value = null
         _selectedArtistTags.value = emptyList()
+        _selectedArtistTopTracks.value = emptyList()
+        _selectedArtistOtherAlbums.value = emptyList()
+        _selectedArtistSimilarArtists.value = emptyList()
 
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
-            
+
             val result = repository.searchArtists(searchQuery, limit = 3)
-            
+
             result.onSuccess { artists ->
                 artists.forEach { artist ->
-                    println("Search result - Artist: ${artist.name}, Image URL: ${artist.image.find { it.size == "extralarge" }?.url}")
+                    println("Search result - Artist: ${artist.name}, Image URL: ${artist.image.find { (it.size == "extralarge") }?.url}")
                 }
                 _searchResults.value = artists
             }.onFailure { exception ->
                 _errorMessage.value = exception.message
             }
-            
+
             _isLoading.value = false
         }
     }
