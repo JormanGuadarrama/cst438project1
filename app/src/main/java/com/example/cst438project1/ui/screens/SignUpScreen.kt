@@ -166,7 +166,7 @@ fun SignUpScreen(navController: NavHostController,authViewModel: AuthViewModel) 
             fontSize = 16.sp,
             modifier = Modifier
                 .padding(top = 20.dp)
-                .clickable { navController.popBackStack() }
+                .clickable { navController.navigate("landing") }
         )
     }
 }

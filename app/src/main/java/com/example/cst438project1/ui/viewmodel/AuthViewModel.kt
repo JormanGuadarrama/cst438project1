@@ -1,11 +1,13 @@
 package com.example.cst438project1.ui.viewmodel
 
 import android.app.Application
+import android.icu.text.StringSearch
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cst438project1.data.local.AppDatabase
+import com.example.cst438project1.data.local.UserDao
 import com.example.cst438project1.data.local.UserEntity
 import com.example.cst438project1.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,6 +112,30 @@ class AuthViewModel(application: Application): AndroidViewModel(application) {
             repository.updatePassword(user.id, newPassword)
             _currentUser.value = user.copy(password = newPassword)
             _errorMessage.value = ""
+        }
+    }
+    fun addRecentSearch(userId: Int, newSearch: String){
+        viewModelScope.launch {
+            val user= dao.getUserById(userId) ?: return@launch
+            val currentList= user.recentSearch.split(",").filter { it.isNotBlank() }
+            val updateList=listOf(newSearch)+currentList
+            val trimmedList =updateList.take(5)
+            val finalString = trimmedList.joinToString(",")
+            dao.updateRecentSearch(userId,finalString)
+            _currentUser.value = user.copy(recentSearch = finalString)
+        }
+    }
+    fun setCurrentUser(user: UserEntity?) {
+        _currentUser.value = user
+    }
+    fun deleteAccount(onSuccess: () -> Unit) {
+        val user = _currentUser.value ?: return
+
+        viewModelScope.launch {
+            repository.deleteUser(user.id)
+            _currentUser.value = null
+            _errorMessage.value = ""
+            onSuccess()
         }
     }
 }

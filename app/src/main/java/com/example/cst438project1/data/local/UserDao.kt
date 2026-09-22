@@ -16,6 +16,8 @@ interface UserDao {
     @Update
     suspend fun updateUser(user: UserEntity)
 
+    @Query("DELETE FROM users WHERE id = :userId")
+    suspend fun deleteUser(userId: Int)
     @Query("UPDATE users SET recentSearch = :search WHERE id = :userId")
     suspend fun updateRecentSearch(userId:Int, search: String)
     //if we want to see all users
@@ -27,4 +29,7 @@ interface UserDao {
     //for setting change password
     @Query("UPDATE users SET password = :newPassword WHERE id = :userId")
     suspend fun updatePassword(userId: Int, newPassword: String)
+
+    @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
+    suspend fun getUserById(id: Int): UserEntity?
 }

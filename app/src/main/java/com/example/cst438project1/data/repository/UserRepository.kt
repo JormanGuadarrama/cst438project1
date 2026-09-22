@@ -16,6 +16,9 @@ class UserRepository(private val dao: UserDao) {
     suspend fun updateRecentSearch(userId: Int,search:String){
         dao.updateRecentSearch(userId,search)
     }
+    suspend fun deleteUser(userId: Int) {
+        dao.deleteUser(userId)
+    }
     //for setting to change username
     suspend fun updateUsername(userId: Int, newUsername: String){
         dao.updateUsername(userId,newUsername)
