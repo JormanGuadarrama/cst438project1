@@ -11,6 +11,8 @@ import com.example.cst438project1.data.repository.LastFmRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.BreakIterator
+import java.util.Locale
 
 class HomeViewModel : ViewModel() {
     private val repository = LastFmRepository(RetrofitClient.apiService)
@@ -62,13 +64,8 @@ class HomeViewModel : ViewModel() {
             // Fetch Artist Info for bio and tags
             repository.getArtistInfo(artist.name).onSuccess { artistDetail ->
                 if (artistDetail != null) {
-                    // Extract first paragraph of bio
-                    val rawBio = artistDetail.bio.content
-                    val firstParagraph = rawBio
-                        .substringBefore("\n\n")
-                        .substringBefore("<a href")
-                        .trim()
-                    _selectedArtistBio.value = firstParagraph
+                    val rawBio = artistDetail.bio.content.ifBlank { artistDetail.bio.summary }
+                    _selectedArtistBio.value = formatBio(rawBio)
 
                     // Extract top 3 tags
                     _selectedArtistTags.value = artistDetail.tags.tag.take(3).map { it.name }
@@ -103,6 +100,70 @@ class HomeViewModel : ViewModel() {
             }
             
             _isLoading.value = false
+        }
+    }
+
+    fun formatBio(rawBio: String): String {
+        if (rawBio.isBlank()) return ""
+
+        val textBeforeAnchor = rawBio.substringBefore("<a href")
+        val cleanText = textBeforeAnchor
+            .replace(Regex("<[^>]*>"), "")
+            .replace("&amp;", "&")
+            .replace("&quot;", "\"")
+            .replace("&apos;", "'")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&#160;", " ")
+            .replace("&nbsp;", " ")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+
+        if (cleanText.isEmpty()) return ""
+
+        val iterator = BreakIterator.getSentenceInstance(Locale.US)
+        iterator.setText(cleanText)
+
+        val sentences = mutableListOf<String>()
+        var start = iterator.first()
+        var end = iterator.next()
+        while (end != BreakIterator.DONE) {
+            val sentence = cleanText.substring(start, end).trim()
+            if (sentence.isNotEmpty()) {
+                sentences.add(sentence)
+            }
+            start = end
+            end = iterator.next()
+        }
+
+        if (sentences.isEmpty()) return ""
+
+        val first = sentences[0]
+        if (first.length > 300) {
+            return truncateTo300(first)
+        }
+
+        if (sentences.size == 1) {
+            return first
+        }
+
+        val second = sentences[1]
+        val combined = "$first $second"
+        return if (combined.length <= 300) {
+            combined
+        } else {
+            first
+        }
+    }
+
+    private fun truncateTo300(text: String): String {
+        if (text.length <= 300) return text
+        val truncated = text.take(300)
+        val lastSpace = truncated.lastIndexOf(' ')
+        return if (lastSpace > 0) {
+            truncated.substring(0, lastSpace).trim()
+        } else {
+            truncated.trim()
         }
     }
 }
