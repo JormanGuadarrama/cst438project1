@@ -16,10 +16,10 @@ data class ArtistMatches(
 
 data class Artist(
     @SerializedName("name") val name: String,
-    @SerializedName("listeners") val listeners: String,
-    @SerializedName("mbid") val mbid: String,
-    @SerializedName("url") val url: String,
-    @SerializedName("image") val image: List<Image>
+    @SerializedName("listeners") val listeners: String? = null,
+    @SerializedName("mbid") val mbid: String? = null,
+    @SerializedName("url") val url: String? = null,
+    @SerializedName("image") val image: List<Image> = emptyList()
 )
 
 data class Image(
@@ -63,4 +63,27 @@ data class Tag(
 data class Bio(
     @SerializedName("summary") val summary: String,
     @SerializedName("content") val content: String
+)
+
+data class LastFmTopTracksResponse(
+    @SerializedName("toptracks") val topTracks: TopTracks
+)
+
+data class TopTracks(
+    @SerializedName("track") val tracks: List<Track>
+)
+
+data class Track(
+    @SerializedName("name") val name: String,
+    @SerializedName("playcount") val playcount: String? = null,
+    @SerializedName("listeners") val listeners: String? = null,
+    @SerializedName("url") val url: String? = null
+)
+
+data class LastFmSimilarArtistsResponse(
+    @SerializedName("similarartists") val similarArtists: SimilarArtists
+)
+
+data class SimilarArtists(
+    @SerializedName("artist") val artists: List<Artist>
 )
