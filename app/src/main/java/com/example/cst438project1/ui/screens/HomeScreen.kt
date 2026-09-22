@@ -81,7 +81,13 @@ fun HomeScreen(
         navController = navController,
         searchQuery = viewModel.searchQuery,
         onSearchQueryChange = { viewModel.onSearchQueryChange(it) },
-        onSearchClick = { viewModel.performSearch() },
+        onSearchClick = {
+            viewModel.performSearch()
+            val user= authViewModel.currentUser.value
+            if(user!=null && viewModel.searchQuery.isNotBlank()){
+                authViewModel.addRecentSearch(user.id,viewModel.searchQuery)
+            }
+                        },
         onArtistClick = { viewModel.onArtistClick(it) },
         searchResults = searchResults,
         selectedArtist = selectedArtist,
@@ -122,6 +128,7 @@ fun HomeScreenContent(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+            Spacer(modifier = Modifier.height(25.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -146,8 +153,7 @@ fun HomeScreenContent(
                     }
                     IconButton(
                         onClick = {
-                            //TODO: change route to userprofilescreen
-                            navController.navigate("profilepic")
+                            navController.navigate("profile")
                         }
                     ) {
                         Box(
