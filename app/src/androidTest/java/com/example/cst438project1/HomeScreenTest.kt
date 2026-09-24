@@ -2,6 +2,8 @@ package com.example.cst438project1
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -97,7 +99,7 @@ class HomeScreenTest {
         }
 
         composeTestRule
-            .onNodeWithText("Search Artists")
+            .onNode(hasSetTextAction() and hasText("Search Artists"))
             .performTextInput("Radiohead")
 
         assertEquals("Radiohead", searchValue)
