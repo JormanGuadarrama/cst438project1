@@ -1,4 +1,4 @@
-# Project 01 Post Mortem - [team 06 / cst438project1]
+# Project 01 Post Mortem - team 04 / cst438project1
 
 ## Context
 [What we set out to build. What actually shipped.]
